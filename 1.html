@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Task 1</title>
+  </head>
+  <body>
+    <script>
+      var array = ['5', '14', '17'];
+      //var array = {"a": 1, "b": 1, "c": 2};
+      //var array = [['1'], ['2']];
+      array_fliped = {};
+
+      function array_flip(array)
+      {
+        if (!array) return null;
+
+        for (var i in array) {
+          if (typeof array[i] === 'string' || typeof array[i] === 'number')
+          array_fliped[array[i]] = i;
+        }
+
+        if (Object.keys(array_fliped).length === 0 && array_fliped.constructor === Object){
+          return null;
+        }
+
+        return array_fliped;
+      }
+      console.log(array_flip(array));
+
+      //for (var i in array) console.log("Ключ = " + i + "; Значение = " + array[i]);
+    </script>
+  </body>
+</html>
