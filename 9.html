@@ -25,11 +25,7 @@
 			osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib}),
 			map = new L.Map('map', {layers: [osm], center: new L.LatLng(55.752, 37.62), zoom: 13 });
 
-		var drawnItems = new L.FeatureGroup();
-		map.addLayer(drawnItems);
-
-		var polyLayers = [];
-
+		/*geoJSON to latlong conversion*/
     const arrayColumn = (arr, n) => arr.map(x => x[n]);
 
     lats = arrayColumn(gardenRing.geometry.coordinates[0], 1);
@@ -37,14 +33,21 @@
 
     var latlong = [];
 
-    for(i = 0; i<lats.length; i++){
+    for(i = 0; i<lats.length; i++) {
       latlong.push([lats[i], longs[i]])
     }
 
+		// set polygon properties
 		var polygon1 = L.polygon([latlong], {
       fillColor: 'red',
       fillOpacity: 0.5,
     });
+
+		/*Initial layer doing editable*/
+		var drawnItems = new L.FeatureGroup();
+		map.addLayer(drawnItems);
+
+		var polyLayers = [];
 		polyLayers.push(polygon1)
 
 		// Add layers to group
@@ -52,24 +55,9 @@
 			drawnItems.addLayer(layer);
 		}
 
-    function calc(latlngs) {
-      const path = latlngs;
-      const polyline = L.polyline(path),
-      polygon = L.polygon(path);
-
-      const meters = turf.length(polyline.toGeoJSON(), { units: 'kilometers' }) * 1000;
-      const sqMeters = turf.area(polygon.toGeoJSON());
-
-      return {
-        length: meters,
-        area: sqMeters
-      };
-    }
-
     outArea(latlong);
 
-    function outArea(latlong)
-    {
+    function outArea(latlong) {
       document.getElementById('eventoutput').innerHTML = JSON.stringify(
         {
           "Area, km<sup>2</sup>": (calc(latlong).area*0.000001).toFixed(3),
@@ -80,6 +68,21 @@
       );
     }
 
+		function calc(latlngs) {
+			const path = latlngs;
+			const polyline = L.polyline(path),
+			polygon = L.polygon(path);
+
+			const meters = turf.length(polyline.toGeoJSON(), { units: 'kilometers' }) * 1000;
+			const sqMeters = turf.area(polygon.toGeoJSON());
+
+			return {
+				length: meters,
+				area: sqMeters
+			};
+		}
+
+		/*set draw controls*/
 		var drawControl = new L.Control.Draw({
 			position: 'topright',
 			draw: {
